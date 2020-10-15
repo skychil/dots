@@ -1,0 +1,28 @@
+# Syntax is similar to sway-output(5).
+# A profile is activated when all of the listed outputs are connected.
+# exec commands are run asynchronusly after the profile is enabled.
+
+# Dual external monitors
+profile {
+  output HDMI-A-2 position 0,0 mode 1920x1200 transform 90
+  output DP-3 position 1200,0 mode 2560x1440
+  # output eDP-1 disable
+  output eDP-1 enable position 3760,0 mode 2560x1440 scale 2
+  exec swaymsg focus output DP-3
+  exec bright
+}
+
+# Single external monitor
+profile {
+  output eDP-1 disable
+  output DP-3 mode 2560x1440
+  exec swaymsg focus output DP-3
+  exec bright
+}
+
+# Laptop only
+profile {
+  output eDP-1 enable position 0,0 mode 2560x1440 scale 1.5
+  exec bright
+}
+

@@ -1,0 +1,300 @@
+# Read `man 5 sway` for a complete reference.
+
+### Idle configuration
+set $lock swaylock -f -c 000000 --indicator-radius 170 --indicator-thickness 30 --indicator-caps-lock
+
+# lock screen immediately (since we auto login tty1 with agetty)
+exec $lock
+
+# Lock screen after idle (seconds), and before sleep
+# Turn off displays after idle (seconds)
+exec swayidle -w \
+  timeout 3600 '$lock' \
+  timeout 4000 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+  before-sleep '$lock'
+
+# Disable idle timeout in certain apps (class usually for x, app_id usually for wayland)
+for_window [class="^Firefox$"]              inhibit_idle fullscreen
+for_window [app_id="^firefox$"]             inhibit_idle fullscreen
+for_window [class="^Chromium$"]             inhibit_idle fullscreen
+for_window [class="^Google-chrome$"]        inhibit_idle fullscreen
+for_window [class="^zoom$"]                 inhibit_idle visible
+for_window [class="^mpv$"]                  inhibit_idle visible
+for_window [app_id="^mpv$"]                 inhibit_idle visible
+
+
+### Output configuration
+
+# Get output names with: swaymsg -t get_outputs
+set $laptop eDP-1
+set $monitor DP-1
+
+output $laptop pos 0 480 res 2560x1440 scale 2
+output $monitor pos 1280 0
+
+# Start kanshi (and restart on sway config reload)
+exec kanshi
+
+# Start Redshift
+exec gammastep
+
+# Enable laptop lid switch
+bindswitch --reload --locked lid:on output $laptop disable
+bindswitch --reload --locked lid:off output $laptop enable
+
+### Input configuration
+
+# Get input names with: swaymsg -t get_inputs
+# Get options with: man 5 sway-input
+
+# Kyria
+input 65261:0:splitkb_Kyria_Keyboard {
+  repeat_delay 150
+  repeat_rate 45
+}
+# Laptop Keyboard
+input 1:1:AT_Translated_Set_2_keyboard {
+  xkb_options caps:escape
+  repeat_delay 150
+  repeat_rate 45
+}
+
+# Laptop Touchpad
+input 1739:0:Synaptics_TM3072-003 {
+  accel_profile adaptive
+  pointer_accel 0.5
+  natural_scroll disabled
+  tap disabled
+  middle_emulation disabled  # middle click
+  dwt enabled  # disable while typing
+  scroll_factor 2.0
+}
+
+### Appearence
+
+# Bar (and restart on sway config reload)
+exec_always ~/.config/waybar/waybar.sh
+
+# Wallpaper
+output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+
+
+# Window borders
+default_border pixel 1
+default_floating_border normal
+# hide_edge_borders --i3 smart
+hide_edge_borders smart
+
+smart_gaps on
+gaps inner 6
+
+# Font
+font pango:SourceCodePro Medium 12
+
+
+### Key bindings
+
+# Launcher
+set $mod Mod4
+set $menu wofi --show run --allow-images | xargs swaymsg exec --
+  # note: swaymsg opens the selection on the same workspace
+set $term kitty
+
+bindsym $mod+x exec $term
+bindsym $mod+Space exec $menu
+bindsym $mod+w kill
+
+ # Reload sway config
+bindsym $mod+Shift+c reload 
+
+# Brightness Keys on Laptop, allow while locked, log scale
+bindsym --locked XF86MonBrightnessUp exec light -T 1.4
+bindsym --locked XF86MonBrightnessDown exec light -T 0.72
+
+# Volume Keys on Laptop
+bindsym --locked XF86AudioRaiseVolume exec "pactl set-sink-mute @DEFAULT_SINK@ false; pactl set-sink-volume @DEFAULT_SINK@ +5%"
+bindsym --locked XF86AudioLowerVolume exec "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+bindsym --locked XF86AudioMute exec "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+bindsym XF86AudioMicMute exec "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+
+# bindsym --locked XF86AudioPlay exec playerctl play-pause
+# bindsym --locked XF86AudioNext exec playerctl next
+# bindsym --locked XF86AudioPrev exec playerctl previous
+
+# Screenshots
+# Focused window
+bindsym --release Print exec \
+  swaymsg -t get_tree | \
+  jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | \
+  grim -g - ~/wip/$(date +%b_%d_%Hh%Mm%S).png
+
+# Focused output
+bindsym --release Control+Print exec \
+  grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') \
+    ~/wip/$(date +%b_%d_%Hh%Mm%S).png
+
+### Layout
+
+# Drag windows with $mod + left mouse button.
+# Resize windows with $mod + right mouse button
+floating_modifier $mod normal
+
+# Chage current container
+bindsym $mod+b splith
+bindsym $mod+v splitv
+bindsym $mod+g layout toggle split
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+
+# Make the current focus fullscreen
+bindsym $mod+f fullscreen
+
+# Toggle the current focus between tiling and floating mode
+bindsym $mod+Shift+space floating toggle
+
+# Swap focus between the tiling area and the floating area
+bindsym $mod+return focus mode_toggle
+
+# Move focus to the parent container
+bindsym $mod+a focus parent
+
+
+# Move current window to the scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the next scratchpad window
+# or hide the focused scratchpad window.
+# Press again to cycle through other scratchpad entries
+bindsym $mod+minus scratchpad show
+
+
+
+#  Vim like direction keys
+set $left n
+set $down e
+set $right i
+set $up u
+
+# Move Focus
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move Window (Shift)
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+### Resize Container Mode:
+mode "resize" {
+  bindsym $left resize shrink width 10px
+  bindsym $down resize grow height 10px
+  bindsym $up resize shrink height 10px
+  bindsym $right resize grow width 10px
+  bindsym Left resize shrink width 10px
+  bindsym Down resize grow height 10px
+  bindsym Up resize shrink height 10px
+  bindsym Right resize grow width 10px
+
+  # Return to default mode
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+### System Command mode
+set $mode_system System: (l) lock, (s) suspend, (q) quit, (r) reboot, (p) poweroff, (R) reboot_UEFI
+mode "$mode_system" {
+  bindsym l exec $lock, mode "default"
+  bindsym s exec systemctl suspend, mode "default"
+  bindsym q exit
+  bindsym r exec systemctl reboot, mode "default"
+  bindsym p exec systemctl poweroff -i, mode "default"
+  bindsym Shift+r exec systemctl reboot --firmware-setup, mode "default"
+
+  # return to default mode
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
+}
+bindsym $mod+Shift+y mode "$mode_system"
+
+
+### Workspaces
+
+set $ws1 1
+set $ws2 2
+set $ws3 3
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+set $ws9 9
+
+# Default workspaces for common programs
+assign [class="^Chromium$"] $ws4
+assign [class="^Firefox$"] $ws3
+
+bindsym $mod+F13 exec firefox
+
+
+# Switch to Workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+
+# Move Container to Workspace
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+
+
+### Floating windows
+
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+
+
+### Start background programs
+
+# Notifications
+exec mako
+bindsym Control+Space exec makoctl dismiss
+bindsym Control+Shift+Space exec makoctl dismiss --all
+
+
+# Google Drive Syncing
+#exec insync start
+
+# pcmanfm deamon, to allow drag and drop
+exec pcmanfm -d
+
+# Prevent headphone jack mic from playing in headphones
+exec amixer -c 1 sset "Mic" mute
+
+# Sway system stuff
+include /etc/sway/config.d/*
