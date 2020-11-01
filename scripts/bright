@@ -68,8 +68,8 @@ setBrightness(){
     h)  oldDell=88;;
     mh) oldDell=60;;
     m)  oldDell=56;;
-    ml) oldDell=28;;
-    l)  oldDell=0;;
+    ml) oldDell=32;;
+    l)  oldDell=16;;
   esac
 
   setDisplay 1 $oldDell &
