@@ -16,12 +16,9 @@ Plug 'suy/vim-context-commentstring'  " change gcc comment to // in <script> tag
 Plug 'andrewradev/splitjoin.vim'  "gS and gJ for smart spliting and joining of lines
 Plug 'AndrewRadev/sideways.vim'  "[, and ], for moving comma separated arguments left and right
 
-
-
 " Visuals
 "Plug 'airblade/vim-gitgutter'  " Git line-modified symbols in the gutter
 Plug 'itchyny/lightline.vim'  " Pretty Status Bar
-" Plug 'morhetz/gruvbox' " Colorscheme
 Plug 'sainnhe/gruvbox-material'  " Colorscheme
 Plug 'chrisbra/colorizer'  " Highlight HEX Color Codes
 Plug 'pangloss/vim-javascript'  " Javascript Syntax Highlighting
@@ -34,7 +31,8 @@ Plug 'tpope/vim-obsession'  " Session Management
 Plug 'dhruvasagar/vim-prosession'  " Add-on to Obsession to autoload Session files
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'  " Fast Fuzzy Finder
-Plug 'justinmk/vim-dirvish'  " Directory viewer (netrw replacement)
+Plug 'francoiscabrol/ranger.vim'  " Replace netrw with ranger
+" Plug 'justinmk/vim-dirvish'  " Directory viewer (netrw replacement)
 Plug 'w0rp/ale'  " Real time linter
 
 " LSP
@@ -51,20 +49,63 @@ if has('termguicolors')
   set termguicolors
 endif
 let g:gruvbox_material_enable_italic = 1
-let g:gruvbox_material_palette = 'mix' "lower contrast gruvbox
-" \ 'fg0':              ['#e2cca9',   '223'],
-" \ 'fg1':              ['#e2cca9',   '223'],
-" \ 'red':              ['#f2594b',   '167'],
-" \ 'orange':           ['#f28534',   '208'],
-" \ 'yellow':           ['#e9b143',   '214'],
-" \ 'green':            ['#b0b846',   '142'],
-" \ 'aqua':             ['#8bba7f',   '108'],
-" \ 'blue':             ['#80aa9e',   '109'],
-" \ 'purple':           ['#d3869b',   '175'],
-" \ 'bg_red':           ['#db4740',   '167'],
-" \ 'bg_green':         ['#b0b846',   '142'],
-" \ 'bg_yellow':        ['#e9b143',   '214']
+let g:gruvbox_material_palette = {
+\ 'bg0':              ['#282828',   '235'],
+\ 'bg1':              ['#32302f',   '236'],
+\ 'bg2':              ['#32302f',   '236'],
+\ 'bg3':              ['#45403d',   '237'],
+\ 'bg4':              ['#45403d',   '237'],
+\ 'bg5':              ['#5a524c',   '239'],
+\ 'bg_statusline1':   ['#32302f',   '236'],
+\ 'bg_statusline2':   ['#3a3735',   '236'],
+\ 'bg_statusline3':   ['#504945',   '240'],
+\ 'bg_diff_green':    ['#34381b',   '22'],
+\ 'bg_visual_green':  ['#3b4439',   '22'],
+\ 'bg_diff_red':      ['#402120',   '52'],
+\ 'bg_visual_red':    ['#4c3432',   '52'],
+\ 'bg_diff_blue':     ['#0e363e',   '17'],
+\ 'bg_visual_blue':   ['#374141',   '17'],
+\ 'bg_visual_yellow': ['#4f422e',   '94'],
+\ 'bg_current_word':  ['#3c3836',   '237'],
+\ 'fg0':              ['#d4be98',   '223'],
+\ 'fg1':              ['#ddc7a1',   '223'],
+\ 'red':              ['#ea6962',   '167'],
+\ 'orange':           ['#e78a4e',   '208'],
+\ 'yellow':           ['#d8a657',   '214'],
+\ 'green':            ['#a9b665',   '142'],
+\ 'aqua':             ['#89b482',   '108'],
+\ 'blue':             ['#7daea3',   '109'],
+\ 'purple':           ['#d3869b',   '175'],
+\ 'bg_red':           ['#ea6962',   '167'],
+\ 'bg_green':         ['#a9b665',   '142'],
+\ 'bg_yellow':        ['#d8a657',   '214'],
+\ 'grey0':            ['#7c6f64',   '243'],
+\ 'grey1':            ['#928374',   '245'],
+\ 'grey2':            ['#a89984',   '246'],
+\ 'none':             ['NONE',      'NONE']
+\ }
+
+function! s:gruvbox_material_custom() abort
+  " See `colors/gruvbox-material.vim` for predefined highlight groups.
+
+  let l:palette = gruvbox_material#get_palette('medium', 'material')
+  " let l:palette = g:gruvbox_material_palette
+
+  " Highlight Params
+  "  (name, foreground, background, UI highlighting)
+  call gruvbox_material#highlight('LineNr', l:palette.grey0, l:palette.bg1)
+  call gruvbox_material#highlight('SignColumn', l:palette.fg0, l:palette.bg0)
+  call gruvbox_material#highlight('VertSplit', l:palette.bg4, l:palette.none)
+  call gruvbox_material#highlight('ColorColumn', l:palette.none, l:palette.bg5)
+endfunction
+
+augroup GruvboxMaterialCustom
+  autocmd!
+  autocmd ColorScheme gruvbox-material call s:gruvbox_material_custom()
+augroup END
+
 colorscheme gruvbox-material
+
 
 set background=dark
 set mouse=a  " Enable mouse support
@@ -180,10 +221,28 @@ inoremap <silent> <C-w> <C-O>:update<CR>
 " Vertical Split Last Open Buffer
 noremap <silent> <space>v :vert sb#<CR>
 
-" Allow j and k to move up and down in wrapped text,
+" Move to other windows
+noremap <silent> <space><Down> <C-w><Down>
+noremap <silent> <space><Up> <C-w><Up>
+noremap <silent> <space><Left> <C-w><Left>
+noremap <silent> <space><Right> <C-w><Right>
+
+" Allow moving up and down in wrapped text,
 " but keep old mapping when moving more than 1 line
 nnoremap <expr> j v:count ? 'j' : 'gj'
 nnoremap <expr> k v:count ? 'k' : 'gk'
+nnoremap <expr> <Down> v:count ? '<Down>' : 'gj'
+nnoremap <expr> <Up> v:count ? '<Up>' : 'gk'
+
+" Make Mouse Wheel faster
+noremap <ScrollWheelUp> 9<C-Y>
+noremap <ScrollWheelDown> 9<C-E>
+
+" Undo / Redo Hotkeys
+nnoremap <C-Z> u
+nnoremap <C-Y> <C-R>
+inoremap <C-Z> <C-O>u
+inoremap <C-Y> <C-O><C-R>
 
 " Indent entire file
 nnoremap <space>= gg=G<C-o><C-o>
@@ -246,6 +305,11 @@ inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
 
+" Disable default ranger mapping (leader f)
+let g:ranger_map_keys = 0
+nnoremap - :Ranger<CR>
+let g:ranger_replace_netrw = 1
+let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
 
 "" Plugins & Utils
 
@@ -283,7 +347,8 @@ let g:splitjoin_trailing_comma = 1
 let g:splitjoin_html_attributes_bracket_on_new_line = 1
 
 " Put Folders at the top of dirvish
-let g:dirvish_mode = ':sort ,^.*[\/],'
+" let g:dirvish_mode = ':sort ,^.*[\/],'
+
 
 " Make vim-vue plugin run faster
 let g:vue_disable_pre_processors=1

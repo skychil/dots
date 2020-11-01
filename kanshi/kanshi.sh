@@ -7,4 +7,4 @@ killall -q kanshi
 while pgrep -x kanshi >/dev/null; do sleep 1; done
 
 # Launch new instance
-kanshi
+kanshi &

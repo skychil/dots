@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ 0 != $(id -u) ]; then echo "this script must be run as root"; exit 1; fi
+
+sudo -u sky qmk compile
+
+dfu-programmer atmega32u4 erase --force
+dfu-programmer atmega32u4 flash /home/sky/qmk_firmware/kyria_rev1_skychil.hex
+dfu-programmer atmega32u4 reset

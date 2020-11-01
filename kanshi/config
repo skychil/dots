@@ -4,21 +4,29 @@
 
 # Dual external monitors
 profile {
-  output HDMI-A-2 position 0,0 mode 1920x1200 transform 90
-  output DP-3 position 1200,0 mode 2560x1440
-  # output eDP-1 disable
-  output eDP-1 enable position 3760,0 mode 2560x1440 scale 2
-  exec swaymsg focus output DP-3
-  exec bright
+  output "Dell Inc. DELL U2719D 9KLCZ13" position 0,0 mode 2560x1440
+  output "Dell Inc. DELL U2410 C592M18HHEPL" position 2560,0 mode 1920x1200 transform 90
+  # output eDP-1 enable position 3760,0 mode 2560x1440 scale 2
+  output eDP-1 disable
+  exec swaymsg focus output "Dell Inc. DELL U2719D 9KLCZ13"
+  exec sleep 1 && bright
 }
 
 # Single external monitor
 profile {
+  output "Dell Inc. DELL U2719D 9KLCZ13" position 0,0 mode 2560x1440
   output eDP-1 disable
-  output DP-3 mode 2560x1440
-  exec swaymsg focus output DP-3
-  exec bright
+  exec swaymsg focus output "Dell Inc. DELL U2719D 9KLCZ13"
+  exec sleep 1 && bright
 }
+
+# Single external monitor
+profile {
+  output "Dell Inc. DELL U2410 C592M18HHEPL" position 2560,0 mode 1920x1200 transform 90
+  output eDP-1 disable
+  exec sleep 1 && bright
+}
+
 
 # Laptop only
 profile {

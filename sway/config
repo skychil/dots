@@ -9,8 +9,8 @@ exec $lock
 # Lock screen after idle (seconds), and before sleep
 # Turn off displays after idle (seconds)
 exec swayidle -w \
-  timeout 3600 '$lock' \
-  timeout 4000 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+  timeout 3600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+  timeout 20000 '$lock' \
   before-sleep '$lock'
 
 # Disable idle timeout in certain apps (class usually for x, app_id usually for wayland)
@@ -25,22 +25,15 @@ for_window [app_id="^mpv$"]                 inhibit_idle visible
 
 ### Output configuration
 
-# Get output names with: swaymsg -t get_outputs
-set $laptop eDP-1
-set $monitor DP-1
-
-output $laptop pos 0 480 res 2560x1440 scale 2
-output $monitor pos 1280 0
-
 # Start kanshi (and restart on sway config reload)
-exec kanshi
+exec_always kanshi
 
 # Start Redshift
 exec gammastep
 
 # Enable laptop lid switch
-bindswitch --reload --locked lid:on output $laptop disable
-bindswitch --reload --locked lid:off output $laptop enable
+bindswitch --reload --locked lid:on output eDP-1 disable
+bindswitch --reload --locked lid:off output eDP-1 enable
 
 ### Input configuration
 
@@ -62,7 +55,7 @@ input 1:1:AT_Translated_Set_2_keyboard {
 # Laptop Touchpad
 input 1739:0:Synaptics_TM3072-003 {
   accel_profile adaptive
-  pointer_accel 0.5
+  pointer_accel 0.44
   natural_scroll disabled
   tap disabled
   middle_emulation disabled  # middle click
@@ -70,13 +63,22 @@ input 1739:0:Synaptics_TM3072-003 {
   scroll_factor 2.0
 }
 
+# Laptop Track Point
+input 2:10:TPPS/2_IBM_TrackPoint {
+  accel_profile adaptive
+  pointer_accel 0.3
+  dwt enabled  # disable while typing
+}
+
+
 ### Appearence
+
 
 # Bar (and restart on sway config reload)
 exec_always ~/.config/waybar/waybar.sh
 
 # Wallpaper
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg ~/dots/sway/wallpaper.jpg tile
 
 
 # Window borders
@@ -89,27 +91,42 @@ smart_gaps on
 gaps inner 6
 
 # Font
-font pango:SourceCodePro Medium 12
+font pango:SourceCodePro Medium 13
+
+# Base16 color scheme variables
+include colorscheme
+
+# Property Name         Border  BG      Text    Indicator Child Border
+client.focused          $base05 $base0D $base00 $base0D $base0D
+client.focused_inactive $base01 $base01 $base05 $base03 $base01
+client.unfocused        $base01 $base00 $base05 $base01 $base01
+client.urgent           $base08 $base08 $base00 $base08 $base08
+client.placeholder      $base00 $base00 $base05 $base00 $base00
+client.background       $base07
 
 
 ### Key bindings
+set $mod Mod4
+
+# Terminal
+bindsym $mod+d exec kitty
 
 # Launcher
-set $mod Mod4
-set $menu wofi --show run --allow-images | xargs swaymsg exec --
-  # note: swaymsg opens the selection on the same workspace
-set $term kitty
+# note: swaymsg makes it open on the same workspace
+bindsym $mod+Space exec wofi --show run --allow-images | xargs swaymsg exec --
 
-bindsym $mod+x exec $term
-bindsym $mod+Space exec $menu
 bindsym $mod+w kill
 
  # Reload sway config
-bindsym $mod+Shift+c reload 
+bindsym $mod+Shift+c reload
 
-# Brightness Keys on Laptop, allow while locked, log scale
+# Laptop Brightness Keys, allow while locked, log scale
 bindsym --locked XF86MonBrightnessUp exec light -T 1.4
 bindsym --locked XF86MonBrightnessDown exec light -T 0.72
+
+# External Monitor Brightness Keys, allow while locked
+bindsym --locked XF86TouchpadOn exec bright u
+bindsym --locked XF86TouchpadOff exec bright d
 
 # Volume Keys on Laptop
 bindsym --locked XF86AudioRaiseVolume exec "pactl set-sink-mute @DEFAULT_SINK@ false; pactl set-sink-volume @DEFAULT_SINK@ +5%"
@@ -117,18 +134,17 @@ bindsym --locked XF86AudioLowerVolume exec "pactl set-sink-volume @DEFAULT_SINK@
 bindsym --locked XF86AudioMute exec "pactl set-sink-mute @DEFAULT_SINK@ toggle"
 bindsym XF86AudioMicMute exec "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
 
-# bindsym --locked XF86AudioPlay exec playerctl play-pause
-# bindsym --locked XF86AudioNext exec playerctl next
-# bindsym --locked XF86AudioPrev exec playerctl previous
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioPrev exec playerctl previous
 
-# Screenshots
-# Focused window
+# Screenshot Focused Container
 bindsym --release Print exec \
   swaymsg -t get_tree | \
   jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | \
   grim -g - ~/wip/$(date +%b_%d_%Hh%Mm%S).png
 
-# Focused output
+# Screenshot Focused Screen
 bindsym --release Control+Print exec \
   grim -o $(swaymsg -t get_outputs | jq -r '.[] | select(.focused) | .name') \
     ~/wip/$(date +%b_%d_%Hh%Mm%S).png
@@ -140,33 +156,19 @@ bindsym --release Control+Print exec \
 floating_modifier $mod normal
 
 # Chage current container
-bindsym $mod+b splith
+bindsym $mod+g splith
 bindsym $mod+v splitv
-bindsym $mod+g layout toggle split
+bindsym $mod+b layout toggle split
 bindsym $mod+s layout stacking
 bindsym $mod+t layout tabbed
-
-# Make the current focus fullscreen
 bindsym $mod+f fullscreen
-
-# Toggle the current focus between tiling and floating mode
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+f floating toggle
 
 # Swap focus between the tiling area and the floating area
 bindsym $mod+return focus mode_toggle
 
 # Move focus to the parent container
 bindsym $mod+a focus parent
-
-
-# Move current window to the scratchpad
-bindsym $mod+Shift+minus move scratchpad
-
-# Show the next scratchpad window
-# or hide the focused scratchpad window.
-# Press again to cycle through other scratchpad entries
-bindsym $mod+minus scratchpad show
-
 
 
 #  Vim like direction keys
@@ -185,6 +187,10 @@ bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
+
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+
 # Move Window (Shift)
 bindsym $mod+Shift+$left move left
 bindsym $mod+Shift+$down move down
@@ -197,14 +203,14 @@ bindsym $mod+Shift+Right move right
 
 ### Resize Container Mode:
 mode "resize" {
-  bindsym $left resize shrink width 10px
-  bindsym $down resize grow height 10px
-  bindsym $up resize shrink height 10px
-  bindsym $right resize grow width 10px
-  bindsym Left resize shrink width 10px
-  bindsym Down resize grow height 10px
-  bindsym Up resize shrink height 10px
-  bindsym Right resize grow width 10px
+  bindsym $left resize shrink width 16px
+  bindsym $down resize grow height 16px
+  bindsym $up resize shrink height 16px
+  bindsym $right resize grow width 16px
+  bindsym Left resize shrink width 16px
+  bindsym Down resize grow height 16px
+  bindsym Up resize shrink height 16px
+  bindsym Right resize grow width 16px
 
   # Return to default mode
   bindsym Return mode "default"
@@ -242,10 +248,10 @@ set $ws8 8
 set $ws9 9
 
 # Default workspaces for common programs
-assign [class="^Chromium$"] $ws4
-assign [class="^Firefox$"] $ws3
+# assign [class="^Chromium$"] $ws2
+# assign [class="^Firefox$"] $ws1
 
-bindsym $mod+F13 exec firefox
+bindsym XF86Launch7 exec firefox
 
 
 # Switch to Workspace
