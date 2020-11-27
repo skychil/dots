@@ -276,7 +276,7 @@ nnoremap <space>ge :Gedit<CR>| "Edit the index directly
 nnoremap <space>gr :Gread<CR>
 nnoremap <space>gw :Gwrite<CR>| "Add another CR?
 nnoremap <space>gm :Gmove<Space>
-nnoremap <space>gp :Git push origin master<CR>
+nnoremap <space>gp :Git push origin main<CR>
 
 " Fast Fuzzy Finding (FZF) Mappings
 nnoremap <silent> <space>f :GFiles<CR>| "Git Tracked Files
