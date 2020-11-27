@@ -29,11 +29,18 @@ for_window [app_id="^mpv$"]                 inhibit_idle visible
 exec_always kanshi
 
 # Start Redshift
-exec gammastep
+exec_always gammastep
 
 # Enable laptop lid switch
 bindswitch --reload --locked lid:on output eDP-1 disable
 bindswitch --reload --locked lid:off output eDP-1 enable
+
+# Bind workspaces to monitors
+workspace 1 output "Dell Inc. DELL U2719D 9KLCZ13"
+workspace 2 output "Dell Inc. DELL U2719D 9KLCZ13"
+workspace 3 output "Dell Inc. DELL U2719D 9KLCZ13"
+workspace 4 output "Dell Inc. DELL U2410 C592M18HHEPL"
+workspace 5 output "Dell Inc. DELL U2410 C592M18HHEPL"
 
 ### Input configuration
 
@@ -129,10 +136,12 @@ bindsym --locked XF86TouchpadOn exec bright u
 bindsym --locked XF86TouchpadOff exec bright d
 
 # Volume Keys on Laptop
-bindsym --locked XF86AudioRaiseVolume exec "pactl set-sink-mute @DEFAULT_SINK@ false; pactl set-sink-volume @DEFAULT_SINK@ +5%"
-bindsym --locked XF86AudioLowerVolume exec "pactl set-sink-volume @DEFAULT_SINK@ -5%"
-bindsym --locked XF86AudioMute exec "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-bindsym XF86AudioMicMute exec "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+bindsym --locked XF86AudioLowerVolume exec pulseaudio-ctl down
+bindsym --locked XF86AudioRaiseVolume exec "pactl set-sink-mute @DEFAULT_SINK@ false; pulseaudio-ctl up"
+# bindsym --locked XF86AudioLowerVolume exec "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+# bindsym --locked XF86AudioRaiseVolume exec "pactl set-sink-mute @DEFAULT_SINK@ false; pactl set-sink-volume @DEFAULT_SINK@ +5%"
+bindsym --locked XF86AudioMute exec pulseaudio-ctl mute
+bindsym --locked XF86AudioMicMute exec pulseaudio-ctl mute-input
 
 bindsym --locked XF86AudioPlay exec playerctl play-pause
 bindsym --locked XF86AudioNext exec playerctl next
@@ -215,6 +224,7 @@ mode "resize" {
   # Return to default mode
   bindsym Return mode "default"
   bindsym Escape mode "default"
+  bindsym q mode "default"
 }
 bindsym $mod+r mode "resize"
 
@@ -294,7 +304,7 @@ bindsym Control+Shift+Space exec makoctl dismiss --all
 
 
 # Google Drive Syncing
-#exec insync start
+exec insync start
 
 # pcmanfm deamon, to allow drag and drop
 exec pcmanfm -d

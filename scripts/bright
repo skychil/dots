@@ -55,9 +55,9 @@ setDisplay(){
 setBrightness(){
   case $1 in
     h)  newDell=100;;
-    mh) newDell=79;;
+    mh) newDell=77;;
     m)  newDell=58;;
-    ml) newDell=37;;
+    ml) newDell=34;;
     l)  newDell=17;;
     *) ;;
   esac
@@ -97,8 +97,8 @@ if [ -z "${1+x}" ]; then
   elif (( "$H" <= 9 )); then setBrightness "mh";
   elif (( "$H" <= 10 )); then setBrightness "h";
   elif (( "$H" <= 15 )); then setBrightness "mh";
-  elif (( "$H" <= 17 )); then setBrightness "m";
-  elif (( "$H" <= 18 )); then setBrightness "ml";
+  elif (( "$H" <= 16 )); then setBrightness "m";
+  elif (( "$H" <= 17 )); then setBrightness "ml";
   elif (( "$H" <= 24 )); then setBrightness "l";
   else echo "Error"
   fi
