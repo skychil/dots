@@ -16,8 +16,8 @@
 
 /* Set Tree Style Tabs Width */
 #sidebar-box[sidebarcommand="treestyletab_piro_sakura_ne_jp-sidebar-action"] {
-    min-width: 300px !important;
-    max-width: 300px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
 }
 
 

@@ -88,16 +88,16 @@ label:focus {
     background-color: #000000;
 }
 
+#temperature.critical {
+    background-color: #f53c3c;
+}
+
 #cpu.alert {
-    background-color: #2980b9;
+    background-color: #66cc99;
 }
 
 #memory.alert {
-    background-color: #9b59b6;
-}
-
-#temperature.critical {
-    background-color: #f53c3c;
+    background-color: #2980b9;
 }
 
 #network.disconnected {
