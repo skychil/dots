@@ -23,7 +23,6 @@ Plug 'sainnhe/gruvbox-material'  " Colorscheme
 Plug 'chrisbra/colorizer'  " Highlight HEX Color Codes
 Plug 'pangloss/vim-javascript'  " Javascript Syntax Highlighting
 Plug 'posva/vim-vue'  " Vue Syntax Highlighting
-"Plug 'yggdroot/indentline'  " Add indent guide lines
 
 " Utils
 Plug 'tpope/vim-fugitive'  " Git Integration
@@ -185,6 +184,9 @@ let &t_EI = "\<Esc>[2 q"
 "
 " Since there are no advantages to having a mapleader, hard code <leader> as <space>
 
+" Increase timeout for leader commands
+set timeoutlen=1400
+
 " Disable Space moving cursor right in normal mode
 nnoremap <space> <NOP>
 
@@ -192,8 +194,8 @@ nnoremap <space> <NOP>
 " set pastetoggle=<space>p
 
 " Swap semicolon and colon in normal mode
-noremap ; :
-noremap : ;
+" noremap ; :
+" noremap : ;
 
 " Make Y work as expected (like D and C)
 nnoremap Y y$
@@ -205,7 +207,14 @@ nnoremap <CR> o<Esc>
 :autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
 " Switch to the alternate-file (previous buffer)
-nnoremap <bs> <c-^>
+nnoremap <C-a> <C-^>
+
+" Toggle between open windows
+nnoremap <bs> <C-w>w
+
+" Remap icrement and decrement
+nnoremap <C-up> <C-a>
+nnoremap <C-down> <C-x>
 
 " Delete current buffer
 noremap <silent> <space>d :bd<CR>
@@ -249,7 +258,7 @@ nnoremap <space>= gg=G<C-o><C-o>
 
 " Editing and Sourcing .vimrc
 nnoremap <space>ev :e $MYVIMRC<CR>
-nnoremap <space>sv :source $MYVIMRC<CR>
+nnoremap <space>.v :source $MYVIMRC<CR>
 
 " Colorize HEX and RGB color codes
 nnoremap <space>C :ColorHighlight<CR>
@@ -287,8 +296,8 @@ nnoremap <silent> <space>h :History<CR>| "Buffer History
 nnoremap <silent> <space>L :BLines<CR>| "Lines in current buffer
 nnoremap <silent> <space>l :Lines<CR>| "Lines in all buffers
 nnoremap <silent> <space>' :Marks<CR>| "Marked lines
-nnoremap <silent> <space>t :BTags<CR>| "Tags in current file
-nnoremap <silent> <space>T :Tags<CR>| "Tags in all files
+" nnoremap <silent> <space>t :BTags<CR>| "Tags in current file
+" nnoremap <silent> <space>T :Tags<CR>| "Tags in all files
 nnoremap <silent> <space>g :Rg<CR>| "Full Power RipGrep
 nnoremap <silent> <space>c :Commands<CR>| "All commands (plugins, user, built in)
 nnoremap <silent> <space>: :History:<CR>| "Command History
@@ -299,6 +308,12 @@ nnoremap <silent> <space>. :Filetypes<CR>| "File Syntax
 " Lsp
 nnoremap <space>a :ALEFix<CR>| "Fix ALE errors
 nnoremap <space>r :LspRename<CR>| " Rename symbol in Buffer
+nnoremap <space>t :LspDefinition<CR>| " (Type) Go To Defintion
+nnoremap <space>s :LspReferences<CR>| " (Search) Go To next reference of current symbol
+" nnoremap <space>s :LspNextReference<CR>| " (Search) Go To next reference of current symbol
+
+nnoremap <space>n :ALENextWrap<CR>| "Next ALE error
+nnoremap <space>N :ALEPreviousWrap<CR>| "Prev ALE error
 
 " Tab autocomplete (prabirshrestha/asyncomplete.vim)
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -316,33 +331,28 @@ let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
 let g:lsp_highlight_references_enabled = 1  " highlight matches
 let g:lsp_diagnostics_enabled = 0  " disable lsp-vim linting
 
+let g:ale_echo_msg_format = '%linter%: %s'
+
 let g:ale_linters = {
-\ 'javascript': ['eslint']
-\}
+  \ 'vue': ['eslint', 'tsserver'],
+  \ }
 
 let g:ale_fixers = {
 \   'vue': ['eslint'],
 \   'javascript': ['eslint'],
 \   'json': ['eslint']
 \}
-" let g:ale_fix_on_save = 1
 
-let g:ale_sign_error = '~'
-let g:ale_sign_warning = '-'
+let g:ale_sign_error = ' ~'
+let g:ale_sign_warning = ' -'
 
 " Color Hex Codes in HTML, CSS, and Vue files
 " let g:colorizer_auto_color=1
 " let g:colorizer_auto_filetype='vue,css,html,js'
 
-" Configure vertical lines used to show indent levels
-let g:indentLine_color_term = 0
-let g:indentLine_char_list = ['┆', '┊']
-
-" Don't auto hide parens in json files
-let g:indentLine_fileTypeExclude = ['json']
-
 " Add trailing comma when splitting lists
 let g:splitjoin_trailing_comma = 1
+
 " Put '>' in html tag on it's own line
 let g:splitjoin_html_attributes_bracket_on_new_line = 1
 
