@@ -49,7 +49,9 @@ mixxx
 mpv
 networkmanager
 npm
+ntfs-3g
 otf-font-awesome
+p7zip
 patch
 pavucontrol
 pcmanfm-gtk3
@@ -60,6 +62,7 @@ pulseaudio-ctl
 python-pillow
 python-pip
 python-setuptools
+qmk
 qt5-wayland
 ranger
 reflector
@@ -89,8 +92,8 @@ wl-clipboard
 wofi
 wshowkeys-git
 xdg-user-dirs
-xorg-server-xwayland
+xorg-xwayland
 yay
 zip
-zoom-system-qt
+zoom
 zsh
