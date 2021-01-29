@@ -13,77 +13,76 @@
 # ddcutil (external monitors)
 # light (laptop)
 
+newDell="DELL U2719D";
+oldDell="DELL U2410";
 
 # Shorthand command to set monitor brightness
 ddcSet(){
-  ddcutil setvcp 10 $2 -d $1 2> /dev/null
+  ddcutil setvcp 10 $2 --model "$1" 2> /dev/null
 }
 
 # set monitor to double its prev value, truncated to int
 # 0 25 50 100
 upBrightness(){
-  displayNum=$1;
-  prev=$(ddcutil getvcp 10 -d $displayNum 2> /dev/null | grep -Eo '= *[0-9]*,' | grep -Eo '[0-9]*');
+  model=$1;
+  prev=$(ddcutil getvcp 10 --model "$model" 2> /dev/null | grep -Eo '= *[0-9]*,' | grep -Eo '[0-9]*');
   double=$(echo "scale = 0; ($prev * 2) / 1" | bc -l);
 
-  if (( $double > 100 )); then ddcSet $displayNum 1OO;
-  elif (( $double == 0 )); then ddcSet $displayNum 25;
-  else ddcSet $displayNum $double;
+  if (( $double > 100 )); then ddcSet "$model" 1OO;
+  elif (( $double == 0 )); then ddcSet "$model" 25;
+  else ddcSet "$model" $double;
   fi
 }
 
 # set monitor to half its prev value, truncated to int
 # 100 50 25 0
 downBrightness(){
-  displayNum=$1;
-  prev=$(ddcutil getvcp 10 -d $displayNum 2> /dev/null | grep -Eo '= *[0-9]*,' | grep -Eo '[0-9]*');
+  model=$1;
+  prev=$(ddcutil getvcp 10 --model "$model" 2> /dev/null | grep -Eo '= *[0-9]*,' | grep -Eo '[0-9]*');
   half=$(echo "scale = 0; ($prev * 0.5) / 1" | bc -l);
 
   if (( $half < 25 ));
-  then ddcSet $displayNum 0;
-  else ddcSet $displayNum $half;
+  then ddcSet "$model" 0;
+  else ddcSet "$model" $half;
   fi
 }
 
 setDisplay(){
-  displayNum=$1;
+  model=$1;
   brightness=$2;
-  prev=$(ddcutil getvcp 10 -d $displayNum 2> /dev/null | grep -Eo '= *[0-9]*,' | grep -Eo '[0-9]*');
-  if [[ $brightness != $prev ]]; then ddcSet $displayNum $brightness; fi
+  prev=$(ddcutil getvcp 10 --model "$model" 2> /dev/null | grep -Eo '= *[0-9]*,' | grep -Eo '[0-9]*');
+  if [[ $brightness != $prev ]]; then ddcSet "$model" $brightness; fi
 }
 
 setBrightness(){
   case $1 in
-    h)  newDell=100;;
-    mh) newDell=77;;
-    m)  newDell=58;;
-    ml) newDell=34;;
-    l)  newDell=17;;
+    h)  newDellVal=100;;
+    mh) newDellVal=77;;
+    m)  newDellVal=58;;
+    ml) newDellVal=34;;
+    l)  newDellVal=18;;
     *) ;;
   esac
-
-  setDisplay 2 $newDell &
-
-  case $1 in
-    h)  oldDell=88;;
-    mh) oldDell=60;;
-    m)  oldDell=56;;
-    ml) oldDell=32;;
-    l)  oldDell=16;;
-  esac
-
-  setDisplay 1 $oldDell &
+  setDisplay "$newDell" $newDellVal &
 
   case $1 in
-    h)  laptop=100;;
-    mh) laptop=80;;
-    m)  laptop=60;;
-    ml) laptop=40;;
-    l)  laptop=21;;
+    h)  oldDellVal=88;;
+    mh) oldDellVal=60;;
+    m)  oldDellVal=56;;
+    ml) oldDellVal=32;;
+    l)  oldDellVal=16;;
   esac
+  setDisplay "$oldDell" $oldDellVal &
 
-  sleep 3s
-  light -S $laptop &
+  case $1 in
+    h)  laptopVal=100;;
+    mh) laptopVal=80;;
+    m)  laptopVal=60;;
+    ml) laptopVal=40;;
+    l)  laptopVal=21;;
+  esac
+  # sleep 3s
+  light -S $laptopVal &
 }
 
 
@@ -106,11 +105,11 @@ else
   # if the script is called with an argument: 'bright u'
   # Increase, decrease, or set monitor brightness
   if [[ $1 == 'u' ]]; then
-    upBrightness 2;
-    upBrightness 1;
+    upBrightness "$newDell";
+    upBrightness "$oldDell";
   elif [[ $1 == 'd' ]]; then
-    downBrightness 2;
-    downBrightness 1;
+    downBrightness "$newDell";
+    downBrightness "$oldDell";
   else
     # h, mh ,m, ml, l
     setBrightness $1
