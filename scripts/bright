@@ -90,14 +90,14 @@ setBrightness(){
 # Set brightness of monitor and laptop based on current time
 if [ -z "${1+x}" ]; then
   H=$(date +%-H)
-  if   (( "$H" <= 6 )); then setBrightness "l";
-  elif (( "$H" <= 7 )); then setBrightness "ml";
+  if   (( "$H" <= 4 )); then setBrightness "l";
+  elif (( "$H" <= 5 )); then setBrightness "ml";
   elif (( "$H" <= 8 )); then setBrightness "m";
   elif (( "$H" <= 9 )); then setBrightness "mh";
   elif (( "$H" <= 10 )); then setBrightness "h";
-  elif (( "$H" <= 15 )); then setBrightness "mh";
-  elif (( "$H" <= 16 )); then setBrightness "m";
-  elif (( "$H" <= 17 )); then setBrightness "ml";
+  elif (( "$H" <= 16 )); then setBrightness "mh";
+  elif (( "$H" <= 20 )); then setBrightness "m";
+  elif (( "$H" <= 23 )); then setBrightness "ml";
   elif (( "$H" <= 24 )); then setBrightness "l";
   else echo "Error"
   fi

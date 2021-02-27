@@ -210,7 +210,8 @@ nnoremap <CR> o<Esc>
 nnoremap <C-a> <C-^>
 
 " Toggle between open windows
-nnoremap <bs> <C-w>w
+nnoremap <bs> <C-w>p
+nnoremap <del> <C-w>w
 
 " Remap icrement and decrement
 nnoremap <C-up> <C-a>
@@ -298,7 +299,7 @@ nnoremap <silent> <space>l :Lines<CR>| "Lines in all buffers
 nnoremap <silent> <space>' :Marks<CR>| "Marked lines
 " nnoremap <silent> <space>t :BTags<CR>| "Tags in current file
 " nnoremap <silent> <space>T :Tags<CR>| "Tags in all files
-nnoremap <silent> <space>g :Rg<CR>| "Full Power RipGrep
+nnoremap <silent> <space>s :Rg<CR>| "Search Entire Project with Ripgrep
 nnoremap <silent> <space>c :Commands<CR>| "All commands (plugins, user, built in)
 nnoremap <silent> <space>: :History:<CR>| "Command History
 nnoremap <silent> <space>H :Helptags!<CR>| "Search help in Fullscreen mode(!)
@@ -306,10 +307,10 @@ nnoremap <silent> <space>M :Maps<CR>| "Key Mappings
 nnoremap <silent> <space>. :Filetypes<CR>| "File Syntax
 
 " Lsp
-nnoremap <space>a :ALEFix<CR>| "Fix ALE errors
-nnoremap <space>r :LspRename<CR>| " Rename symbol in Buffer
-nnoremap <space>t :LspDefinition<CR>| " (Type) Go To Defintion
-nnoremap <space>s :LspReferences<CR>| " (Search) Go To next reference of current symbol
+nnoremap <space>x :ALEFix<CR>| "Fix ALE errors
+nnoremap <space>r :LspRename<CR>| " Rename Symbol
+nnoremap <space>t :LspDefinition<CR>| " Go To Type Defintion
+nnoremap <space>a :LspReferences<CR>| " Show All References to Symbol
 " nnoremap <space>s :LspNextReference<CR>| " (Search) Go To next reference of current symbol
 
 nnoremap <space>n :ALENextWrap<CR>| "Next ALE error

@@ -89,13 +89,13 @@ output * bg ~/dots/sway/wallpaper.jpg tile
 
 
 # Window borders
-default_border pixel 1
+default_border pixel 2
 default_floating_border normal
 # hide_edge_borders --i3 smart
 hide_edge_borders smart
 
 smart_gaps on
-gaps inner 6
+gaps inner 1
 
 # Font
 font pango:SourceCodePro Medium 13
@@ -164,12 +164,11 @@ bindsym --release Control+Print exec \
 # Resize windows with $mod + right mouse button
 floating_modifier $mod normal
 
+# Split current container (with different V/H than parent)
+bindsym $mod+b split toggle
+
 # Chage current container
-bindsym $mod+g splith
-bindsym $mod+v splitv
-bindsym $mod+b layout toggle split
-bindsym $mod+s layout stacking
-bindsym $mod+t layout tabbed
+bindsym $mod+g layout toggle splith splitv tabbed
 bindsym $mod+f fullscreen
 bindsym $mod+Shift+f floating toggle
 
@@ -177,7 +176,7 @@ bindsym $mod+Shift+f floating toggle
 bindsym $mod+return focus mode_toggle
 
 # Move focus to the parent container
-bindsym $mod+a focus parent
+bindsym $mod+p focus parent
 
 
 #  Vim like direction keys
@@ -197,8 +196,8 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 
-bindsym $mod+Tab workspace next
-bindsym $mod+Shift+Tab workspace prev
+bindsym $mod+s workspace prev
+bindsym $mod+t workspace next
 
 # Move Window (Shift)
 bindsym $mod+Shift+$left move left
@@ -212,14 +211,14 @@ bindsym $mod+Shift+Right move right
 
 ### Resize Container Mode:
 mode "resize" {
-  bindsym $left resize shrink width 16px
-  bindsym $down resize grow height 16px
-  bindsym $up resize shrink height 16px
-  bindsym $right resize grow width 16px
-  bindsym Left resize shrink width 16px
-  bindsym Down resize grow height 16px
-  bindsym Up resize shrink height 16px
-  bindsym Right resize grow width 16px
+  bindsym $left resize shrink width 20px
+  bindsym $down resize grow height 20px
+  bindsym $up resize shrink height 20px
+  bindsym $right resize grow width 20px
+  bindsym Left resize shrink width 20px
+  bindsym Down resize grow height 20px
+  bindsym Up resize shrink height 20px
+  bindsym Right resize grow width 20px
 
   # Return to default mode
   bindsym Return mode "default"
@@ -262,6 +261,8 @@ set $ws9 9
 # assign [class="^Firefox$"] $ws1
 
 bindsym XF86Launch7 exec firefox
+bindsym XF86Launch8 exec kitty ranger
+bindsym XF86Launch9 exec kitty sh -c "cd sw; vim"
 
 
 # Switch to Workspace
