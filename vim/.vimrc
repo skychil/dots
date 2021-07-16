@@ -206,6 +206,9 @@ nnoremap <CR> o<Esc>
 :autocmd CmdwinEnter * nnoremap <CR> <CR>
 :autocmd BufReadPost quickfix nnoremap <CR> <CR>
 
+" Mapping to undo accidental Enter press in insert mode
+inoremap <C-\> <C-o>:left 0<Cr><BS>
+
 " Switch to the alternate-file (previous buffer)
 nnoremap <C-a> <C-^>
 
@@ -278,7 +281,7 @@ nnoremap <space>cv a.value<Esc>
 
 " Fugitive (Git) Mappings
 nnoremap <space>ga :Git add %:p<CR><CR>
-nnoremap <space>gs :vertical Gstatus<CR>
+nnoremap <space>gs :vertical Git<CR>
 nnoremap <space>gb :Gblame<CR>
 nnoremap <space>gd :Gdiff<CR>
 nnoremap <space>gc :Git diff --cached<CR>
@@ -331,6 +334,7 @@ let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
 
 let g:lsp_highlight_references_enabled = 1  " highlight matches
 let g:lsp_diagnostics_enabled = 0  " disable lsp-vim linting
+let g:lsp_document_code_action_signs_enabled = 0  " disable A> in gutter on next error search
 
 let g:ale_echo_msg_format = '%linter%: %s'
 
@@ -346,6 +350,7 @@ let g:ale_fixers = {
 
 let g:ale_sign_error = ' ~'
 let g:ale_sign_warning = ' -'
+let g:ale_sign_info = ' *'
 
 " Color Hex Codes in HTML, CSS, and Vue files
 " let g:colorizer_auto_color=1
