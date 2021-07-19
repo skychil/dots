@@ -11,6 +11,7 @@ avrdude
 base
 bc
 bison
+calibre
 clang
 cups
 cups-pdf
@@ -35,6 +36,7 @@ intel-ucode
 jq
 kanshi
 kitty
+libreoffice-still
 libtool
 libusb-compat
 light
@@ -58,7 +60,6 @@ pcmanfm-gtk3
 pkgconf
 pulseaudio
 pulseaudio-alsa
-pulseaudio-ctl
 python-pillow
 python-pip
 python-setuptools

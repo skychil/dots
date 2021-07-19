@@ -9,6 +9,7 @@ fi
 alias ll='ls -latr --color=auto'
 alias ls='ls --color=auto'
 alias pacman='sudo pacman'
+alias wifi='nmtui'
 
 # Set defaut programs
 export DIFFPROG=meld
