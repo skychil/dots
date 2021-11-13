@@ -36,6 +36,7 @@ intel-ucode
 jq
 kanshi
 kitty
+lf
 libreoffice-still
 libtool
 libusb-compat
@@ -54,6 +55,7 @@ npm
 ntfs-3g
 otf-font-awesome
 p7zip
+paru
 patch
 pavucontrol
 pcmanfm-gtk3
