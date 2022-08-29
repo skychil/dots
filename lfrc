@@ -1,0 +1,261 @@
+set shell sh  # interpreter for shell commands
+
+# Specify program for file previews
+set preview true
+set previewer bat
+
+# Safer shell commands
+# Option '-e' is used to exit on error.
+# Option '-u' is used to give error for unset variables.
+# Option '-f' disables pathname expansion which can be useful when $f, $fs, and
+# $fx variables contain names with '*' or '?' characters. However, this option
+# is used selectively within individual commands as it can be limiting at times
+set shellopts '-eu'
+set ifs "\n"  # set sh delimeter
+
+set hidden true  # show hidden files by default
+set period 1  # Reload contents every second
+set incsearch  # Incremental search with /
+set findlen 2  # Start searching after 2 chars
+set ignorecase true  # ignore case in search
+set scrolloff 10  # distance between selected line and top/bottom when scrolling
+cmd open $$EDITOR $fx  # open everything with vim
+set promptfmt "\033[33;1m%u\033[0m\033[32;1m@\033[0m\033[34;1m%h\033[0m:\033[35;1m%d\033[0m\033[36;1m%f\033[0m"
+
+# Unmap some default mappings
+map r  # rename
+map c  # clear
+map gh  # gohome
+
+# Custom Mappings
+map . set hidden!  # Toggle Hidden Files
+
+map d cut
+map <delete> trash  # Move to trash (trash-cli)
+map DR restore_trash  # Restore last trash (trash-cli)
+map DD rmrf  # Purge from existence
+
+map <enter> open
+map <esc> quit
+cmd q quit  # enable :q quit for vim junkies
+
+map a rename # rename at the end of the line
+map A push a<a-b><a-b><a-f> # rename before .extention
+map i push a<c-a> # rename at the beginning of the line
+map I push a<c-a> # rename at the beginning of the line
+map cc push a<c-u> # rename from blank line
+
+map ch chmod
+map x extract
+map t tar
+
+map H top
+map L bottom
+
+map s push :glob-select<space>  # Quick glob select files
+map S invert  # Invert selection
+map v :toggle  # Select and move down
+map V :toggle; down  # Select and move down
+map u unselect  # Undo visual selection
+map U clear  # Undo cut/copy selection
+
+map o push :touch<space>  # New file
+map O push :mkdir<space>  # New directory
+map P :symlink
+
+map ~ cd ~
+map r broot_jump
+map f fzf_jump
+
+map <f-2> bulk_rename
+
+# set terminal title to current working directory
+cmd on-cd &{{
+  printf "\033]0; $PWD\007" > /dev/tty
+}}
+
+# paste a symlink with y (copy) and P
+cmd symlink %{{
+  set -- $(cat ~/.local/share/lf/files)
+  mode="$1"
+  shift
+  if [ "$#" -lt 1 ]; then
+    lf -remote "send $id echo no files to link"
+    exit 0
+  fi
+  if [ "$mode" = "copy" ]; then
+    # symbolically copy mode is indicating a soft link
+    ln -sr -t . -- "$@"
+  fi
+  rm ~/.local/share/lf/files
+  lf -remote "send clear"
+}}
+
+# purge current file or selected files from existence
+cmd rmrf %{{
+  set -f  # disable filename expansion
+  printf "rm -rf $fx\n"
+  rm -rf -- $fx
+}}
+
+# move current file or selected files to trash folder
+cmd trash %{{
+  set -f  # disable filename expansion
+
+  # ensure trash-cli installed
+  if ! command -v trash-put &> /dev/null
+  then
+    echo "trash-cli not installed"
+    exit
+  fi
+
+  for f in $fx
+  do
+    trash-put $f
+  done
+}}
+
+# trash-cli restore
+cmd restore_trash %{{
+  trash-restore
+}}
+
+cmd mkdir %mkdir -p "$(echo $* | tr ' ' '\ ')"
+
+cmd touch %touch "$(echo $* | tr ' ' '\ ')"
+
+cmd chmod ${{
+  set -f  # disable filename expansion
+  for f in $fx
+  do
+    stat -c "%a %n" $f
+  done
+
+  printf "chmod: "
+  read ans
+
+  for f in $fx
+  do
+    chmod $ans $f
+  done
+  lf -remote "send $id reload"
+}}
+
+cmd bulk_rename ${{
+    old="$(mktemp)"
+    new="$(mktemp)"
+    if [ -n "$fs" ]; then
+        fs="$(basename $fs)"
+    else
+        fs="$(ls)"
+    fi
+    printf '%s\n' "$fs" >"$old"
+    printf '%s\n' "$fs" >"$new"
+    $EDITOR "$new"
+    [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
+    paste "$old" "$new" | while IFS= read -r names; do
+        src="$(printf '%s' "$names" | cut -f1)"
+        dst="$(printf '%s' "$names" | cut -f2)"
+        if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+            continue
+        fi
+        mv -- "$src" "$dst"
+    done
+    rm -- "$old" "$new"
+    lf -remote "send $id unselect"
+}}
+
+cmd broot_jump ${{
+  f=$(mktemp)
+  res="$(broot --outcmd $f && cat $f | sed 's/cd //')"
+  rm -f "$f"
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+cmd fzf_jump ${{
+  res="$(find . -maxdepth 3 | fzf --header='Jump to:')"
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+# extract the current file with the right command
+# https://xkcd.com/1168/
+cmd extract ${{
+  set -f  # disable filename expansion
+  case $f in
+    *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
+    *.tar.gz|*.tgz) tar xzvf $f;;
+    *.tar.xz|*.txz) tar xJvf $f;;
+    *.zip) unzip $f;;
+    *.rar) unrar x $f;;
+    *.7z) 7z x $f;;
+  esac
+}}
+
+
+cmd tar %tar czvf "$f.tar.gz" "$f"
+# compress current file or selected files with tar and gunzip
+# cmd tar %{{
+#   set -f  # disable filename expansion
+#   tar cvzf "$f.tar.gz" "$f"
+# }}
+
+# compress current file or selected files with zip
+cmd zip ${{
+  set -f  # disable filename expansion
+  mkdir $1
+  cp -r $fx $1
+  zip -r $1.zip $1
+  rm -rf $1
+}}
+
+#!/bin/zsh
+#typeset -A names
+#names[no]="global default"
+#names[fi]="normal file"
+#names[di]="directory"
+#names[ln]="symbolic link"
+#names[pi]="named pipe"
+#names[so]="socket"
+#names[do]="door"
+#names[bd]="block device"
+#names[cd]="character device"
+#names[or]="orphan symlink"
+#names[mi]="missing file"
+#names[su]="set uid"
+#names[sg]="set gid"
+#names[tw]="sticky other writable"
+#names[ow]="other writable"
+#names[st]="sticky"
+#names[ex]="executable"
+#
+#for i in ${(s.:.)LS_COLORS}
+#do
+#    key=${i%\=*}
+#    color=${i#*\=}
+#    name=${names[(e)$key]-$key}
+#    printf '\e[%sm%s\e[m\n' $color $name
+#done
+
+# need to go in zshrc
+#export LF_COLORS="\
+#.git/=01;32:\
+#.git=32:\
+#.gitignore=32:\
+#Makefile=32:\
+#README.*=33:\
+#*.txt=34:\
+#*.md=34:\
+#ln=01;40:\
+#di=01;34:\
+#ex=01;32:\
+#"

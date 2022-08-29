@@ -69,14 +69,13 @@
     },
     "battery": {
       "states": {
-        "good": 90,
-        "warning": 30,
-        "critical": 15
+        "warning": 25,
+        "critical": 10
       },
-      "format": "{icon} {capacity}%",
-      "format-charging": "",
-      "format-plugged": "",
-      "format-good": "{icon}",
+      "interval": 8,
+      "format": "{icon} {capacity}",
+      "format-charging": "{icon}",
+      "format-not charging": "{icon}",
       "format-icons": ["", "", "", "", ""]
     },
 
@@ -96,23 +95,12 @@
       },
       "on-click": "pavucontrol"
     },
-    "custom/media": {
-      "format": "{icon} {}",
-      "return-type": "json",
-      "max-length": 40,
-      "format-icons": {
-        "spotify": "",
-        "default": "🎜"
-      },
-      "escape": true,
-      "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null"
-    },
     "clock": {
-      "format": "{:%-H:%M}",
+      "format": "{:%OH:%M}",
       "tooltip": false
     },
     "clock#date": {
-      "format": " {:%a %b %-d}",
+      "format": "{:%a %b %Od}",
       "tooltip": false
     }
 }]

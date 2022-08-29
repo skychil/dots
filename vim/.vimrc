@@ -1,3 +1,6 @@
+scriptencoding utf-8
+set encoding=utf-8
+
 " Autoload vim-plug
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -30,8 +33,8 @@ Plug 'tpope/vim-obsession'  " Session Management
 Plug 'dhruvasagar/vim-prosession'  " Add-on to Obsession to autoload Session files
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'  " Fast Fuzzy Finder
-Plug 'francoiscabrol/ranger.vim'  " Replace netrw with ranger
-" Plug 'justinmk/vim-dirvish'  " Directory viewer (netrw replacement)
+Plug 'ptzz/lf.vim'  " lf Termenal File Manager (ranger replacement)
+Plug 'voldikss/vim-floaterm'  " lf.vim dependency (must come after)
 Plug 'w0rp/ale'  " Real time linter
 
 " LSP
@@ -47,8 +50,14 @@ call plug#end()
 if has('termguicolors')
   set termguicolors
 endif
+
+" Tell vim terminal escape codes for switching to italic
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+"https://github.com/sainnhe/gruvbox-material/issues/5
+
 let g:gruvbox_material_enable_italic = 1
-let g:gruvbox_material_palette = {
+let g:gruvbox_material_colors_override = {
 \ 'bg0':              ['#282828',   '235'],
 \ 'bg1':              ['#32302f',   '236'],
 \ 'bg2':              ['#32302f',   '236'],
@@ -87,7 +96,7 @@ let g:gruvbox_material_palette = {
 function! s:gruvbox_material_custom() abort
   " See `colors/gruvbox-material.vim` for predefined highlight groups.
 
-  let l:palette = gruvbox_material#get_palette('medium', 'material')
+  let l:palette = gruvbox_material#get_palette('medium', 'material', {})
   " let l:palette = g:gruvbox_material_palette
 
   " Highlight Params
@@ -133,10 +142,13 @@ endif
 set undodir=~/.vim/undo-dir
 set undofile
 
+set gdefault  " invert the meaning of the /g regex flag (global by default)
+
 " Splits
 set splitbelow  " Open new horizontal splits below
 set splitright  " Open new vertical splits to the right
 set diffopt+=vertical  " Open diffs in vertical splits
+set diffopt+=iwhiteall  " Ignore whitespace in diffs
 set fillchars+=vert:▕  " Set vertical split character
 
 " Set colors of vertical split bar
@@ -213,7 +225,7 @@ inoremap <C-\> <C-o>:left 0<Cr><BS>
 nnoremap <C-a> <C-^>
 
 " Toggle between open windows
-nnoremap <bs> <C-w>p
+nnoremap <Tab> <C-w>p
 nnoremap <del> <C-w>w
 
 " Remap icrement and decrement
@@ -256,6 +268,9 @@ nnoremap <C-Z> u
 nnoremap <C-Y> <C-R>
 inoremap <C-Z> <C-O>u
 inoremap <C-Y> <C-O><C-R>
+
+" Search and replace word under cursor
+nnoremap <F2> *:%s//<c-r><c-w>/c
 
 " Indent entire file
 nnoremap <space>= gg=G<C-o><C-o>
@@ -322,15 +337,21 @@ nnoremap <space>N :ALEPreviousWrap<CR>| "Prev ALE error
 " Tab autocomplete (prabirshrestha/asyncomplete.vim)
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+nnoremap <silent> <bs> :Lf<CR>
 inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
 
-" Disable default ranger mapping (leader f)
-let g:ranger_map_keys = 0
-nnoremap - :Ranger<CR>
-let g:ranger_replace_netrw = 1
-let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
+" Browse to another file with LF
+nnoremap <silent> <bs> :Lf<CR>
+
 
 "" Plugins & Utils
+
+" lf
+let g:lf_map_keys = 0  " Disable default lf.vim shortcut: <leader>f
+let g:lf_replace_netrw = 1  " Open lf when vim opens a directory
+let g:lf_width = 1.0
+let g:lf_height = 1.0
+
 
 let g:lsp_highlight_references_enabled = 1  " highlight matches
 let g:lsp_diagnostics_enabled = 0  " disable lsp-vim linting
@@ -361,9 +382,6 @@ let g:splitjoin_trailing_comma = 1
 
 " Put '>' in html tag on it's own line
 let g:splitjoin_html_attributes_bracket_on_new_line = 1
-
-" Put Folders at the top of dirvish
-" let g:dirvish_mode = ':sort ,^.*[\/],'
 
 
 " Make vim-vue plugin run faster

@@ -1,0 +1,52 @@
+# Inserts a blank line between shell prompts
+add_newline = false
+
+# Wait longer for git status on prompt
+command_timeout = 1000
+
+# Disable the line break
+[line_break]
+disabled = true
+
+[directory]
+truncation_length = 5
+#truncation_symbol = "…/"
+
+# Make the symbol char stay green, and change vim normal mode indicator to V
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold green)'
+vicmd_symbol = '[N](bold green)'
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+
+[cmd_duration]
+disabled = true
+
+[package]
+disabled = true
+
+[python]
+disabled = true
+
+[ruby]
+disabled = true
+
+[rust]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[java]
+disabled = true
+
+[golang]
+disabled = true
+
+[aws]
+disabled = true
+
+[terraform]
+disabled = true

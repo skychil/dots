@@ -30,6 +30,6 @@ profile {
 
 # Laptop only
 profile {
-  output eDP-1 enable position 0,0 mode 2560x1440 scale 1.5
-  exec bright
+  output eDP-1 enable position 0,0 mode 1920x1200 scale 1.25
+  exec /home/sky/dots/scripts/bright
 }

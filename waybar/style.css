@@ -62,21 +62,22 @@ window#waybar {
     color: @base04;
 }
 
-#battery.charging {
-    color: @base06;
-    background-color: #26A65B;
-}
-
 @keyframes blink {
     to {
         color: @base00;
-        background-color: @base06;
     }
 }
 
+#battery.charging {
+    color: @base0B;
+}
+
+#battery.warning:not(.charging) {
+    color: @base08;
+}
+
 #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
+    color: @base08;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;

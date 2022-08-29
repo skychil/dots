@@ -38,11 +38,11 @@ bindswitch --reload --locked lid:on output eDP-1 disable
 bindswitch --reload --locked lid:off output eDP-1 enable
 
 # Bind workspaces to monitors
-workspace 1 output "Dell Inc. DELL U2719D 9KLCZ13"
-workspace 2 output "Dell Inc. DELL U2719D 9KLCZ13"
-workspace 3 output "Dell Inc. DELL U2719D 9KLCZ13"
-workspace 4 output "Dell Inc. DELL U2410 C592M18HHEPL"
-workspace 5 output "Dell Inc. DELL U2410 C592M18HHEPL"
+# workspace 1 output "Dell Inc. DELL U2719D 9KLCZ13"
+# workspace 2 output "Dell Inc. DELL U2719D 9KLCZ13"
+# workspace 3 output "Dell Inc. DELL U2719D 9KLCZ13"
+# workspace 4 output "Dell Inc. DELL U2410 C592M18HHEPL"
+# workspace 5 output "Dell Inc. DELL U2410 C592M18HHEPL"
 
 ### Input configuration
 
@@ -54,12 +54,40 @@ input 65261:0:splitkb_Kyria_Keyboard {
   repeat_delay 150
   repeat_rate 45
 }
+
 # Laptop Keyboard
 input 1:1:AT_Translated_Set_2_keyboard {
   xkb_options caps:escape
-  repeat_delay 150
-  repeat_rate 45
+  repeat_delay 155
+  repeat_rate 40
 }
+
+# New
+# Laptop Touchpad
+input 1739:52824:SYNA8008:00_06CB:CE58_Touchpad {
+  accel_profile adaptive
+  pointer_accel 0.45
+  natural_scroll disabled
+  tap disabled
+  middle_emulation disabled  # middle click
+  dwt enabled  # disable while typing
+  scroll_factor 2.0
+}
+
+# Laptop Track Point
+input 2:10:TPPS/2_Elan_TrackPoint {
+  accel_profile adaptive
+  pointer_accel 0.3
+  dwt enabled  # disable while typing
+}
+
+# Disable laptop touch screen
+input 1267:11342:ELAN901C:00_04F3:2C4E {
+  events disabled
+}
+
+
+# Old
 
 # Laptop Touchpad
 input 1739:0:Synaptics_TM3072-003 {
