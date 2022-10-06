@@ -35,7 +35,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'  " Fast Fuzzy Finder
 Plug 'ptzz/lf.vim'  " lf Termenal File Manager (ranger replacement)
 Plug 'voldikss/vim-floaterm'  " lf.vim dependency (must come after)
-Plug 'w0rp/ale'  " Real time linter
+Plug 'dense-analysis/ale'  " Real time linter
 
 " LSP
 Plug 'prabirshrestha/asyncomplete.vim'
@@ -120,7 +120,7 @@ set mouse=a  " Enable mouse support
 set ignorecase  " Case insensitive searching
 set smartcase  " Case sensitive when search term has a capital
 set number  " Show current line number
-set relativenumber  " Relative line numbers
+"set relativenumber  " Relative line numbers
 set numberwidth=1  " Min width of line number column
 set noshowmode  " Hide '-- Insert --' from the command line
 set backspace=2  " Make <backspace> behave normally in insert mode
@@ -222,11 +222,11 @@ nnoremap <CR> o<Esc>
 inoremap <C-\> <C-o>:left 0<Cr><BS>
 
 " Switch to the alternate-file (previous buffer)
-nnoremap <C-a> <C-^>
+nnoremap <del> <C-^>
 
 " Toggle between open windows
-nnoremap <Tab> <C-w>p
-nnoremap <del> <C-w>w
+nnoremap <Tab> <C-w>w
+nnoremap <S-Tab> <C-w>p
 
 " Remap icrement and decrement
 nnoremap <C-up> <C-a>
@@ -360,11 +360,15 @@ let g:lsp_document_code_action_signs_enabled = 0  " disable A> in gutter on next
 let g:ale_echo_msg_format = '%linter%: %s'
 
 let g:ale_linters = {
-  \ 'vue': ['eslint', 'tsserver'],
+  \ 'vue': ['eslint'],
+  \ 'typescript': ['eslint'],
+  \ 'javascript': ['eslint'],
+\   'json': ['eslint']
   \ }
 
 let g:ale_fixers = {
 \   'vue': ['eslint'],
+\   'typescript': ['eslint'],
 \   'javascript': ['eslint'],
 \   'json': ['eslint']
 \}
