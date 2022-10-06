@@ -6,11 +6,12 @@ set $lock swaylock -f -c 000000 --indicator-radius 170 --indicator-thickness 30 
 # lock screen immediately (since we auto login tty1 with agetty)
 exec $lock
 
-# Lock screen after idle (seconds), and before sleep
 # Turn off displays after idle (seconds)
+# Lock screen after idle (seconds)
+# Lock screen before sleep
 exec swayidle -w \
   timeout 3600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-  timeout 20000 '$lock' \
+  timeout 10000 '$lock' \
   before-sleep '$lock'
 
 # Disable idle timeout in certain apps (class usually for x, app_id usually for wayland)
@@ -66,7 +67,7 @@ input 1:1:AT_Translated_Set_2_keyboard {
 # Laptop Touchpad
 input 1739:52824:SYNA8008:00_06CB:CE58_Touchpad {
   accel_profile adaptive
-  pointer_accel 0.45
+  pointer_accel 0.48
   natural_scroll disabled
   tap disabled
   middle_emulation disabled  # middle click
