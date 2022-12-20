@@ -342,5 +342,8 @@ exec pcmanfm -d
 # Prevent headphone jack mic from playing in headphones
 exec amixer -c 1 sset "Mic" mute
 
+# Turn on easyEffects to make laptop EQ with pipewire better
+exec easyeffects --gapplication-service
+
 # Sway system stuff
 include /etc/sway/config.d/*
