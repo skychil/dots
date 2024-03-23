@@ -3,6 +3,11 @@
     font-size: 12pt;
 }
 
+/* hides the native tabs */
+#TabsToolbar {
+  visibility: collapse !important;
+}
+
 /* Hide horizontal tabs at the top of the window */
 #tabbrowser-tabs {
   visibility: collapse !important;

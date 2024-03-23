@@ -2,7 +2,10 @@ set shell sh  # interpreter for shell commands
 
 # Specify program for file previews
 set preview true
-set previewer bat
+set previewer ctpv
+set cleaner ctpvclear
+&ctpv -s $id
+&ctpvquit $id
 
 # Safer shell commands
 # Option '-e' is used to exit on error.
@@ -19,7 +22,6 @@ set incsearch  # Incremental search with /
 set findlen 2  # Start searching after 2 chars
 set ignorecase true  # ignore case in search
 set scrolloff 10  # distance between selected line and top/bottom when scrolling
-cmd open $$EDITOR $fx  # open everything with vim
 set promptfmt "\033[33;1m%u\033[0m\033[32;1m@\033[0m\033[34;1m%h\033[0m:\033[35;1m%d\033[0m\033[36;1m%f\033[0m"
 
 # Unmap some default mappings
@@ -163,6 +165,15 @@ cmd bulk_rename ${{
     done
     rm -- "$old" "$new"
     lf -remote "send $id unselect"
+}}
+
+cmd open ${{
+    test -L $f && f=$(readlink -f $f)
+    case "$(file --mime-type "$f" -b)" in
+        text/*) $$EDITOR $fx;;
+        audio/*) mpv --audio-display=no $f ;;
+        *) for f in $fx; do xdg-open $f > /dev/null 2> /dev/null & done;;
+    esac
 }}
 
 cmd broot_jump ${{

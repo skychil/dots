@@ -116,8 +116,7 @@ input 2:10:TPPS/2_IBM_TrackPoint {
 exec_always ~/.config/waybar/waybar.sh
 
 # Wallpaper
-output * bg ~/dots/sway/wallpaper.jpg tile
-
+output * bg ~/dots/sway/wallpaper.jpg stretch
 
 # Window borders
 default_border pixel 2
@@ -290,8 +289,8 @@ set $ws9 9
 # assign [class="^Firefox$"] $ws1
 
 bindsym XF86Launch7 exec firefox
-bindsym XF86Launch8 exec kitty ranger
-bindsym XF86Launch9 exec kitty sh -c "cd sw; vim"
+bindsym XF86Launch8 exec kitty lf
+bindsym $mod+v exec kitty sh -c "cd sw; vim"
 
 
 # Switch to Workspace
