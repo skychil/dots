@@ -51,7 +51,7 @@ bindswitch --reload --locked lid:off output eDP-1 enable
 # Get options with: man 5 sway-input
 
 # Kyria
-input 65261:0:splitkb_Kyria_Keyboard {
+input 36125:40349:splitkb.com_Kyria_rev1 {
   repeat_delay 150
   repeat_rate 45
 }
