@@ -26,8 +26,11 @@ Plug 'sainnhe/gruvbox-material'  " Colorscheme
 Plug 'chrisbra/colorizer'  " Highlight HEX Color Codes
 Plug 'pangloss/vim-javascript'  " Javascript Syntax Highlighting
 Plug 'posva/vim-vue'  " Vue Syntax Highlighting
+Plug 'vim-python/python-syntax'  " Python Syntax Highlighting
+Plug 'augustunderground/vim-skill'  " SKILL Syntax Highlighting
 
 " Utils
+Plug 'psf/black', { 'branch': 'stable' }  " python code formater
 Plug 'tpope/vim-fugitive'  " Git Integration
 Plug 'tpope/vim-obsession'  " Session Management
 Plug 'dhruvasagar/vim-prosession'  " Add-on to Obsession to autoload Session files
@@ -399,6 +402,9 @@ nnoremap "*p :let @"=substitute(system("wl-paste --no-newline --primary"), '<C-v
 
 " Highlight .vue files from the top to avoid mishighlights
 autocmd FileType vue syntax sync fromstart
+
+" Python-syntax plugin
+let g:python_highlight_all = 1
 
 " Setup Pretty Status Bar (add git status, readonly icon, remove separators,
 let g:lightline = {
